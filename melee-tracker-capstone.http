@@ -1,0 +1,6 @@
+@melee_tracker_capstone_HostAddress = http://localhost:5294
+
+GET {{melee_tracker_capstone_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
