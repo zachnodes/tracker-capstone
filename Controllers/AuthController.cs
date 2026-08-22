@@ -2,6 +2,8 @@
 using melee_tracker_capstone.DTOs;
 using melee_tracker_capstone.Services;
 using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace melee_tracker_capstone.Controllers
 {
@@ -12,7 +14,7 @@ namespace melee_tracker_capstone.Controllers
         private readonly AuthService _authService;
 
         public AuthController(AuthService authService)
-        { 
+        {
             _authService = authService;
         }
 
@@ -43,7 +45,39 @@ namespace melee_tracker_capstone.Controllers
                 // Intentionally vague
                 return Unauthorized(new { message = "Could not find account, invalid email or password" });
 
+            Response.Cookies.Append("auth_token", result.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/",
+                Expires = new DateTimeOffset(result.ExpiresAt, TimeSpan.Zero)
+            });
+
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("auth_token");
+            return Ok(new { message = "Logged out successfully"});
+        }
+
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var email = User.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+
+            if (userId == null)
+                return Unauthorized();
+
+            return Ok(new { userId, email});
+        }
+
     }
 }
