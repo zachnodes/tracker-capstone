@@ -5,18 +5,40 @@ using Microsoft.IdentityModel.Tokens;
 using melee_tracker_capstone.Services;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using Amazon.S3;
+using melee_tracker_capstone.Data.Entities;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
 
 // Database
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.MapEnum<ReplayStatus>("replay_status");
+dataSourceBuilder.MapEnum<SourceType>("source_type");
+dataSourceBuilder.MapEnum<ResultType>("result_type");
+dataSourceBuilder.MapEnum<BracketType>("bracket_type_enum");
+var dataSource = dataSourceBuilder.Build();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(dataSource));
+
+
 
 // Auth service
 builder.Services.AddScoped<AuthService>();
+
+// Replay service
+builder.Services.AddScoped<ReplayService>();
 
 // JWT authentication
 var jwtSecret = builder.Configuration["Jwt:Secret"]!;

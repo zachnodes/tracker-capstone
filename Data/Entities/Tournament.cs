@@ -15,8 +15,6 @@ public partial class Tournament
     [Column("id")]
     public Guid Id { get; set; }
 
-   
-
     [Column("user_id")]
     public Guid UserId { get; set; }
 
@@ -30,9 +28,6 @@ public partial class Tournament
     [Column("placement")]
     [StringLength(50)]
     public string? Placement { get; set; }
-
-    [Column("soruce")]
-    public SourceType SourceType { get; set; }
 
     [Column("startgg_tournament_id")]
     [StringLength(100)]

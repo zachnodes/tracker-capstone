@@ -18,4 +18,12 @@
         Losers,
         GrandFinals
     }
+
+    public enum ReplayStatus
+    {
+        Pending,
+        Processing,
+        Complete,
+        Failed
+    }
 }

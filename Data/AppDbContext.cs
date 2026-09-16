@@ -18,6 +18,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<PlayerProfile> PlayerProfiles { get; set; }
 
+    public virtual DbSet<Replay> Replays { get; set; }
+
     public virtual DbSet<Set> Sets { get; set; }
 
     public virtual DbSet<Tournament> Tournaments { get; set; }
@@ -26,14 +28,9 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasPostgresEnum<SourceType>("source_type");
-
-        modelBuilder.HasPostgresEnum<ResultType>("result_type");
-
-        modelBuilder.HasPostgresEnum<BracketType>("bracket_type_enum");
-
         modelBuilder
             .HasPostgresEnum("bracket_type_enum", new[] { "winners", "losers", "grand_finals" })
+            .HasPostgresEnum("replay_status", new[] { "pending", "processing", "complete", "failed" })
             .HasPostgresEnum("result_type", new[] { "win", "loss" })
             .HasPostgresEnum("source_type", new[] { "manual", "startgg" });
 
@@ -71,6 +68,16 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("player_profiles_secondary_character_id_fkey");
 
             entity.HasOne(d => d.User).WithOne(p => p.PlayerProfile).HasConstraintName("player_profiles_user_id_fkey");
+        });
+
+        modelBuilder.Entity<Replay>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("replays_pkey");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.UploadedAt).HasDefaultValueSql("now()");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Replays).HasConstraintName("replays_user_id_fkey");
         });
 
         modelBuilder.Entity<Set>(entity =>

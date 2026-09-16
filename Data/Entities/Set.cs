@@ -32,17 +32,11 @@ public partial class Set
     [StringLength(100)]
     public string? RoundName { get; set; }
 
-    [Column("bracket_type")]
-    public BracketType BracketType { get; set; } 
-
     [Column("score_user")]
     public int ScoreUser { get; set; }
 
     [Column("score_opponent")]
     public int ScoreOpponent { get; set; }
-
-    [Column("result")]
-    public ResultType Result { get; set; }
 
     [Column("user_character_id")]
     public Guid? UserCharacterId { get; set; }
@@ -52,9 +46,6 @@ public partial class Set
 
     [Column("played_at")]
     public DateTime PlayedAt { get; set; }
-
-    [Column("source")]
-    public SourceType Source { get; set; }
 
     [Column("startgg_set_id")]
     [StringLength(100)]

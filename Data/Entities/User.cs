@@ -32,6 +32,9 @@ public partial class User
     public virtual PlayerProfile? PlayerProfile { get; set; }
 
     [InverseProperty("User")]
+    public virtual ICollection<Replay> Replays { get; set; } = new List<Replay>();
+
+    [InverseProperty("User")]
     public virtual ICollection<Set> Sets { get; set; } = new List<Set>();
 
     [InverseProperty("User")]
