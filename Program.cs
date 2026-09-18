@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddSingleton<RabbitMQPublisher>();
 
 // Database
 //builder.Services.AddDbContext<AppDbContext>(options =>
@@ -99,6 +100,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
 
 // CORS — allows your React frontend to call this API
 builder.Services.AddCors(options =>

@@ -11,11 +11,14 @@ namespace melee_tracker_capstone.Services
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
         private readonly IAmazonS3 _s3Client;
-        public ReplayService(AppDbContext context, IConfiguration config, IAmazonS3 s3Client) 
+
+        private readonly RabbitMQPublisher _rabbitMQPublisher;
+        public ReplayService(AppDbContext context, IConfiguration config, IAmazonS3 s3Client, RabbitMQPublisher rabbitMQPublisher) 
         {   
             _context = context;
             _config = config;
             _s3Client = s3Client;
+            _rabbitMQPublisher = rabbitMQPublisher;
         }
 
         public async Task<ReplayResponse> UploadReplay(IFormFile file, Guid userId)
@@ -37,12 +40,10 @@ namespace melee_tracker_capstone.Services
 
             await _s3Client.PutObjectAsync(putRequest);
 
-            // 2. Publish job to RabbitMQ
-
-            // 3. Create replay with status=pending
+            // 2. Create replay with status=pending
             var replay = new Replay
             {
-                Id = Guid.NewGuid(),
+                Id = replayId,
                 UserId = userId,
                 S3Key = s3Key,
                 Status = ReplayStatus.Pending,
@@ -51,6 +52,9 @@ namespace melee_tracker_capstone.Services
 
             _context.Replays.Add(replay);
             await _context.SaveChangesAsync();
+
+            // 3. Publish job to RabbitMQ
+            await _rabbitMQPublisher.PublishReplayJob(replayId, s3Key);
 
             // 4. Return the response
             return new ReplayResponse
