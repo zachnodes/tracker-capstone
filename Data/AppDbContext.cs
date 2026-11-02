@@ -77,6 +77,12 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.UploadedAt).HasDefaultValueSql("now()");
 
+            entity.Property(e => e.ProcessedS3Key).HasColumnName("processed_s3_key");
+            entity.Property(e => e.StageId).HasColumnName("stage_id");
+            entity.Property(e => e.PlayedAt).HasColumnName("played_at");
+            entity.Property(e => e.LastFrame).HasColumnName("last_frame");
+            entity.Property(e => e.FailureReason).HasColumnName("failure_reason");
+
             entity.HasOne(d => d.User).WithMany(p => p.Replays).HasConstraintName("replays_user_id_fkey");
         });
 

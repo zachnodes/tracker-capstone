@@ -21,6 +21,21 @@ public partial class Replay
     [StringLength(500)]
     public string? S3Key { get; set; }
 
+    [Column("processed_s3_key")]
+    public string? ProcessedS3Key { get; set; }
+
+    [Column("stage_id")]
+    public int? StageId { get; set; }
+
+    [Column("played_at")]
+    public DateTime? PlayedAt { get; set; }
+
+    [Column("last_frame")]
+    public int? LastFrame { get; set; }
+
+    [Column("failure_reason")]
+    public string? FailureReason { get; set; }
+
     [Column("status")]
     public ReplayStatus Status { get; set; }
 

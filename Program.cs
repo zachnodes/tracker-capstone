@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddSingleton<RabbitMQPublisher>();
+builder.Services.AddHostedService<ReplayProcessedConsumer>();
 
 // Database
 //builder.Services.AddDbContext<AppDbContext>(options =>
@@ -40,6 +41,9 @@ builder.Services.AddScoped<AuthService>();
 
 // Replay service
 builder.Services.AddScoped<ReplayService>();
+
+// Set service
+builder.Services.AddScoped<SetService>();
 
 // JWT authentication
 var jwtSecret = builder.Configuration["Jwt:Secret"]!;

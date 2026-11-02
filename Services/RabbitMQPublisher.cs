@@ -29,6 +29,7 @@ namespace melee_tracker_capstone.Services
 
         public async Task PublishReplayJob(Guid replayId, string s3Key)
         {
+            // Message that the parser gets
             var message = new { replayId = replayId, s3Key = s3Key };
             var body = Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(message));
 

@@ -8,7 +8,8 @@ namespace melee_tracker_capstone.Data.Entities;
 
 [Table("tournaments")]
 [Index("UserId", Name = "idx_tournaments_user_id")]
-[Index("StartggTournamentId", Name = "tournaments_startgg_tournament_id_key", IsUnique = true)]
+//[Index("StartggTournamentId", Name = "tournaments_startgg_tournament_id_key", IsUnique = true)]
+[Index("UserId", "StartggTournamentId", Name = "tournaments_user_startgg_tournament_id_key", IsUnique = true)]
 public partial class Tournament
 {
     [Key]
@@ -24,6 +25,9 @@ public partial class Tournament
 
     [Column("event_date")]
     public DateOnly EventDate { get; set; }
+
+    [Column("source")]
+    public SourceType Source { get; set; }
 
     [Column("placement")]
     [StringLength(50)]

@@ -12,7 +12,9 @@ namespace melee_tracker_capstone.Data.Entities;
 [Index("TournamentId", Name = "idx_sets_tournament_id")]
 [Index("UserCharacterId", Name = "idx_sets_user_character_id")]
 [Index("UserId", Name = "idx_sets_user_id")]
-[Index("StartggSetId", Name = "sets_startgg_set_id_key", IsUnique = true)]
+//[Index("StartggSetId", Name = "sets_startgg_set_id_key", IsUnique = true)]
+[Index("UserId", "StartggSetId", Name = "sets_user_startgg_set_id_key", IsUnique = true)]
+
 public partial class Set
 {
     [Key]
@@ -56,6 +58,15 @@ public partial class Set
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
+
+    [Column("bracket_type")]
+    public BracketType? BracketType { get; set; }
+
+    [Column("result")]
+    public ResultType Result { get; set; }
+
+    [Column("source")]
+    public SourceType Source { get; set; }
 
     [ForeignKey("OpponentId")]
     [InverseProperty("Sets")]
